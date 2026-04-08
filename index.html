@@ -1,438 +1,129 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Shorts Post Maker</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800;900&family=Noto+Sans+Devanagari:wght@400;600;700;900&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#111;color:#eee;font-family:'Baloo 2','Noto Sans Devanagari',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:28px 16px 80px}
-
-h1{font-size:22px;font-weight:800;color:#fff;margin-bottom:4px;letter-spacing:-.5px}
-.tagline{font-size:12px;color:rgba(255,255,255,.35);margin-bottom:28px;letter-spacing:.5px}
-
-/* TEMPLATE PICKER */
-.tpicker{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:28px}
-.tcard{width:64px;cursor:pointer;border-radius:10px;overflow:hidden;border:2.5px solid transparent;transition:border-color .2s,transform .15s;flex-shrink:0}
-.tcard:hover{transform:scale(1.07)}
-.tcard.on{border-color:#f5a623}
-.tcard-th{width:100%;aspect-ratio:9/16;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px}
-.tcard-lb{font-size:9px;text-align:center;padding:3px 0;background:rgba(0,0,0,.55);color:rgba(255,255,255,.65);font-weight:600;letter-spacing:.5px}
-
-/* CONTROLS */
-.ctrl{width:100%;max-width:480px;display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
-.row{display:flex;gap:10px}
-.f{display:flex;flex-direction:column;gap:5px;flex:1}
-.f label{font-size:10px;color:rgba(255,255,255,.38);letter-spacing:1.2px;text-transform:uppercase}
-input[type=text],textarea{background:#1e1e1e;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#eee;font-family:'Baloo 2','Noto Sans Devanagari',sans-serif;font-size:14px;padding:9px 12px;outline:none;transition:border-color .2s;width:100%}
-input:focus,textarea:focus{border-color:#f5a623}
-textarea{resize:vertical;min-height:100px;line-height:1.6}
-
-.upload{background:#1a1a1a;border:1.5px dashed rgba(255,255,255,.13);border-radius:10px;padding:22px;text-align:center;cursor:pointer;position:relative;transition:border-color .2s,background .2s}
-.upload:hover{border-color:#f5a623;background:#1d1c19}
-.upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.upload .ico{font-size:26px}
-.upload p{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px}
-#prev-wrap{margin-top:10px;display:none;border-radius:8px;overflow:hidden;max-height:170px}
-#prev-wrap img,#prev-wrap video{width:100%;max-height:170px;object-fit:cover;display:block;border-radius:8px}
-.rm-btn{margin-top:6px;background:transparent;border:1px solid rgba(255,60,60,.35);color:rgba(255,80,80,.65);border-radius:6px;padding:5px 12px;cursor:pointer;font-size:11px;width:100%;display:none;font-family:'Baloo 2',sans-serif}
-
-/* DOWNLOAD */
-.dl{background:#f5a623;color:#000;font-family:'Baloo 2',sans-serif;font-size:15px;font-weight:800;border:none;border-radius:12px;padding:15px 40px;cursor:pointer;transition:opacity .2s,transform .15s;letter-spacing:.3px}
-.dl:hover{opacity:.9;transform:translateY(-1px)}
-.dl:disabled{opacity:.5;cursor:not-allowed;transform:none}
-
-/* RENDER ROOT */
-#rr{position:fixed;left:-9999px;top:0;width:1080px;height:1920px;overflow:hidden;pointer-events:none}
-
-/* =====================================================
-   POST TEMPLATES  (all 1080×1920)
-===================================================== */
-.post{width:1080px;height:1920px;position:relative;overflow:hidden;font-family:'Baloo 2','Noto Sans Devanagari',sans-serif}
-
-/* shared: media top, body bottom */
-.post .ml{position:absolute;top:0;left:0;width:100%;height:680px;overflow:hidden}
-.post .ml img,.post .ml video{width:100%;height:100%;object-fit:cover;display:block}
-.post .mo{position:absolute;top:0;left:0;width:100%;height:680px}
-.post .bl{position:absolute;bottom:0;left:0;width:100%;display:flex;flex-direction:column}
-
-/* brand bar */
-.post .bb{position:absolute;top:46px;left:70px;right:70px;display:flex;align-items:center;justify-content:space-between;z-index:20}
-.post .bh{font-size:30px;font-weight:700;letter-spacing:.5px}
-.post .bd{font-size:22px;font-weight:800;padding:8px 24px;border-radius:40px;letter-spacing:1.5px}
-
-/* lines shared */
-.post .lines{display:flex;flex-direction:column}
-.post .footer-txt{font-weight:500}
-
-/* ── T1: milliontop original (light bg, yellow box) ── */
-.t1{background:#efefea}
-.t1 .mo{background:linear-gradient(to bottom,rgba(0,0,0,.06) 0%,rgba(0,0,0,.52) 100%)}
-.t1 .bl{background:#f5f5f0;padding:0 0 90px}
-.t1 .hl-box{background:#ffe033;padding:46px 70px 38px;text-align:center}
-.t1 .hl-box .hl{font-size:88px;font-weight:900;color:#111;line-height:1.15}
-.t1 .lines{padding:40px 70px 0;gap:0}
-.t1 .li{font-size:50px;font-weight:600;color:#111;line-height:1.45;text-align:center;padding:24px 0;border-bottom:1px solid rgba(0,0,0,.09)}
-.t1 .li:last-child{border-bottom:none}
-.t1 .footer-txt{padding:32px 70px 0;text-align:center;font-size:38px;color:rgba(0,0,0,.4)}
-.t1 .bh{color:rgba(255,255,255,.85);text-shadow:0 2px 10px rgba(0,0,0,.7)}
-.t1 .bd{background:#ffe033;color:#111;font-size:20px}
-
-/* ── T2: dark fire ── */
-.t2{background:#070709}
-.t2 .deco{position:absolute;inset:0;pointer-events:none}
-.t2 .deco::before{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(245,110,20,.17),transparent 70%);top:-120px;right:-200px}
-.t2 .deco::after{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(255,40,80,.11),transparent 70%);bottom:250px;left:-120px}
-.t2 .mo{background:linear-gradient(to bottom,rgba(7,7,9,.08) 0%,rgba(7,7,9,.95) 100%)}
-.t2 .bl{padding:0 75px 110px}
-.t2 .hl-box{padding:44px 0 22px}
-.t2 .hl{font-size:96px;font-weight:900;color:#fff;line-height:1.08;letter-spacing:-1px}
-.t2 .acc{color:#f5a623}
-.t2 .div-bar{width:90px;height:5px;background:linear-gradient(90deg,#f5a623,#ff4f7b);border-radius:3px;margin:22px 0 38px}
-.t2 .lines{gap:22px}
-.t2 .li{font-size:50px;font-weight:500;color:rgba(255,255,255,.8);line-height:1.45;padding-left:30px;border-left:4px solid #f5a623}
-.t2 .footer-txt{padding-top:44px;font-size:36px;color:rgba(255,255,255,.3)}
-.t2 .bh{color:rgba(255,255,255,.5);font-size:26px}
-.t2 .bd{background:rgba(245,166,35,.13);color:#f5a623;border:1.5px solid rgba(245,166,35,.28);font-size:20px}
-
-/* ── T3: editorial bold ── */
-.t3{background:#f0ebe1}
-.t3 .mo{background:linear-gradient(to bottom,rgba(0,0,0,0) 35%,rgba(240,235,225,.99) 100%)}
-.t3 .bl{background:#f0ebe1;padding:0 75px 110px}
-.t3 .hl-box{padding:50px 0 16px}
-.t3 .hl{font-size:104px;font-weight:900;color:#14100a;line-height:1.02;letter-spacing:-2px}
-.t3 .acc{color:#c83a16}
-.t3 .tag{display:inline-block;background:#c83a16;color:#fff;font-size:22px;font-weight:700;padding:8px 24px;border-radius:4px;letter-spacing:2px;margin:18px 0 38px}
-.t3 .lines{gap:0}
-.t3 .li{font-size:52px;font-weight:600;color:#201508;line-height:1.45;padding:26px 0;border-bottom:1.5px solid rgba(0,0,0,.1)}
-.t3 .li:first-child{border-top:1.5px solid rgba(0,0,0,.1)}
-.t3 .footer-txt{padding-top:38px;font-size:36px;color:rgba(0,0,0,.32)}
-.t3 .bh{color:rgba(255,255,255,.85);font-size:28px;text-shadow:0 2px 10px rgba(0,0,0,.55)}
-.t3 .bd{background:#c83a16;color:#fff;font-size:20px}
-
-/* ── T4: neon grid ── */
-.t4{background:#03060e}
-.t4 .grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(0,210,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,210,255,.04) 1px,transparent 1px);background-size:54px 54px;pointer-events:none}
-.t4 .mo{background:linear-gradient(to bottom,rgba(3,6,14,.05) 0%,rgba(3,6,14,.93) 100%)}
-.t4 .bl{padding:0 75px 110px}
-.t4 .hl-box{padding:38px 0 16px}
-.t4 .hl{font-size:94px;font-weight:900;color:#fff;line-height:1.08;letter-spacing:-1.5px}
-.t4 .acc{color:#00dfff;text-shadow:0 0 28px rgba(0,223,255,.45)}
-.t4 .gline{width:100%;height:2px;background:linear-gradient(90deg,#00dfff,transparent);margin:26px 0 40px;box-shadow:0 0 14px rgba(0,223,255,.45)}
-.t4 .lines{gap:24px}
-.t4 .li{font-size:48px;font-weight:500;color:rgba(255,255,255,.75);line-height:1.5;display:flex;align-items:flex-start;gap:22px}
-.t4 .li::before{content:'▸';color:#00dfff;font-size:42px;flex-shrink:0;margin-top:4px}
-.t4 .footer-txt{padding-top:46px;font-size:34px;color:rgba(255,255,255,.22)}
-.t4 .bh{color:rgba(255,255,255,.4);font-size:26px}
-.t4 .bd{background:rgba(0,223,255,.09);color:#00dfff;border:1px solid rgba(0,223,255,.22);font-size:20px}
-
-/* ── T5: warm cream ── */
-.t5{background:#fff7ee}
-.t5 .mo{background:linear-gradient(to bottom,rgba(255,247,238,0) 30%,rgba(255,247,238,1) 100%)}
-.t5 .bl{background:#fff7ee;padding:0 80px 110px}
-.t5 .hl-box{padding:52px 0 20px}
-.t5 .hl{font-size:108px;font-weight:900;color:#150800;line-height:1.0;letter-spacing:-2px}
-.t5 .acc{color:#e85004}
-.t5 .sub{font-size:44px;font-weight:500;color:#7c4400;margin:14px 0 44px;line-height:1.4}
-.t5 .lines{gap:18px}
-.t5 .li{font-size:50px;font-weight:600;color:#2a1100;line-height:1.5;background:#ffefe0;border-radius:14px;padding:22px 30px}
-.t5 .footer-txt{padding-top:42px;font-size:36px;color:rgba(0,0,0,.28)}
-.t5 .bh{color:rgba(255,255,255,.85);font-size:28px;text-shadow:0 2px 12px rgba(0,0,0,.55)}
-.t5 .bd{background:#e85004;color:#fff;font-size:20px}
-
-/* ── T6: cricket green ── */
-.t6{background:#010d06}
-.t6 .deco{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 80% 45% at 50% 0%,rgba(0,180,80,.13),transparent)}
-.t6 .mo{background:linear-gradient(to bottom,rgba(1,13,6,.09) 0%,rgba(1,13,6,.93) 100%)}
-.t6 .bl{padding:0 75px 110px}
-.t6 .hl-box{padding:38px 0 18px}
-.t6 .hl{font-size:96px;font-weight:900;color:#fff;line-height:1.08}
-.t6 .acc{color:#00d460}
-.t6 .cup{font-size:60px;margin-bottom:6px}
-.t6 .lines{gap:20px}
-.t6 .li{font-size:50px;font-weight:600;color:rgba(255,255,255,.82);line-height:1.45;background:rgba(0,212,96,.06);border:1px solid rgba(0,212,96,.13);border-radius:12px;padding:22px 30px}
-.t6 .footer-txt{padding-top:42px;font-size:36px;color:rgba(255,255,255,.28)}
-.t6 .bh{color:rgba(255,255,255,.5);font-size:26px}
-.t6 .bd{background:rgba(0,212,96,.12);color:#00d460;border:1px solid rgba(0,212,96,.25);font-size:20px}
-</style>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Shorts Post Maker | MillionTop</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800;900&family=Noto+Sans+Devanagari:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Shorts Post Maker</h1>
-<p class="tagline">Image / Video + Text → 1080×1920 PNG Download</p>
+    <h1>Shorts Post Maker</h1>
+    <p class="tagline">Image → PNG &nbsp;|&nbsp; Video → MP4 (1080×1920)</p>
 
-<!-- TEMPLATE SELECTOR -->
-<div class="tpicker" id="tpicker">
-  <div class="tcard on" data-t="1" onclick="selT(1,this)">
-    <div class="tcard-th" style="background:#f5f5f0;flex-direction:column;gap:0">
-      <div style="background:#ffe033;width:100%;flex:.6;display:flex;align-items:center;justify-content:center;font-size:8px;color:#111;font-weight:900;text-align:center;padding:3px">ये सिर्फ<br>इतिहास</div>
-      <div style="width:100%;flex:.4;display:flex;flex-direction:column;gap:2px;padding:4px 5px">
-        <div style="height:2px;background:#ccc;border-radius:1px;width:90%"></div>
-        <div style="height:2px;background:#ccc;border-radius:1px;width:75%"></div>
-        <div style="height:2px;background:#ccc;border-radius:1px;width:85%"></div>
-      </div>
+    <div class="tpicker" id="tpicker">
+        <div class="tcard on" data-t="1" onclick="selT(1,this)">
+            <div class="tcard-th" style="background:#f5f5f0;flex-direction:column;gap:0">
+                <div style="background:#ffe033;width:100%;flex:.6;display:flex;align-items:center;justify-content:center;font-size:8px;color:#111;font-weight:900;text-align:center;padding:3px">ये सिर्फ<br>इतिहास</div>
+                <div style="width:100%;flex:.4;display:flex;flex-direction:column;gap:2px;padding:4px 5px">
+                    <div style="height:2px;background:#ccc;border-radius:1px;width:90%"></div>
+                    <div style="height:2px;background:#ccc;border-radius:1px;width:75%"></div>
+                    <div style="height:2px;background:#ccc;border-radius:1px;width:85%"></div>
+                </div>
+            </div>
+            <div class="tcard-lb">Original</div>
+        </div>
+        <div class="tcard" data-t="2" onclick="selT(2,this)">
+            <div class="tcard-th" style="background:#070709;flex-direction:column;align-items:flex-start;padding:6px">
+                <div style="font-size:10px;color:#f5a623;font-weight:900;line-height:1.1">FIRE<br><span style="color:#fff;font-size:8px">Dark</span></div>
+                <div style="width:30px;height:2px;background:linear-gradient(90deg,#f5a623,#ff4f7b);margin-top:3px;border-radius:1px"></div>
+            </div>
+            <div class="tcard-lb">Dark Fire</div>
+        </div>
+        <div class="tcard" data-t="3" onclick="selT(3,this)">
+            <div class="tcard-th" style="background:#f0ebe1;flex-direction:column;align-items:flex-start;padding:6px;gap:3px">
+                <div style="font-size:10px;font-weight:900;color:#14100a;line-height:1.1;letter-spacing:-.5px">BIG<br>BOLD</div>
+                <div style="background:#c83a16;padding:2px 5px;font-size:7px;color:#fff;font-weight:700;border-radius:2px">VIRAL</div>
+            </div>
+            <div class="tcard-lb">Editorial</div>
+        </div>
+        <div class="tcard" data-t="4" onclick="selT(4,this)">
+            <div class="tcard-th" style="background:#03060e;background-image:linear-gradient(rgba(0,210,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,210,255,.06) 1px,transparent 1px);background-size:10px 10px;flex-direction:column;align-items:flex-start;padding:6px">
+                <div style="font-size:10px;font-weight:900;color:#fff;line-height:1.1">NEO<br><span style="color:#00dfff">N</span></div>
+            </div>
+            <div class="tcard-lb">Neon</div>
+        </div>
+        <div class="tcard" data-t="5" onclick="selT(5,this)">
+            <div class="tcard-th" style="background:#fff7ee;flex-direction:column;align-items:flex-start;padding:6px">
+                <div style="font-size:14px;font-weight:900;color:#150800;letter-spacing:-1px;line-height:1">WO<span style="color:#e85004">W</span></div>
+            </div>
+            <div class="tcard-lb">Warm</div>
+        </div>
+        <div class="tcard" data-t="6" onclick="selT(6,this)">
+            <div class="tcard-th" style="background:#010d06;flex-direction:column;align-items:flex-start;padding:6px;gap:2px">
+                <div style="font-size:14px">🏏</div>
+                <div style="font-size:8px;font-weight:900;color:#00d460">Cricket</div>
+            </div>
+            <div class="tcard-lb">Cricket</div>
+        </div>
     </div>
-    <div class="tcard-lb">Original</div>
-  </div>
-  <div class="tcard" data-t="2" onclick="selT(2,this)">
-    <div class="tcard-th" style="background:#070709;flex-direction:column;align-items:flex-start;padding:6px">
-      <div style="font-size:10px;color:#f5a623;font-weight:900;line-height:1.1">FIRE<br><span style="color:#fff;font-size:8px">Dark</span></div>
-      <div style="width:30px;height:2px;background:linear-gradient(90deg,#f5a623,#ff4f7b);margin-top:3px;border-radius:1px"></div>
+
+    <div class="ctrl">
+        <div class="row">
+            <div class="f"><label>Handle</label><input type="text" id="i-handle" value="@milliontop" oninput="render()"/></div>
+            <div class="f"><label>Badge</label><input type="text" id="i-badge" value="TRENDING" oninput="render()"/></div>
+        </div>
+        <div class="f">
+            <label>Headline — colored part ke liye *asterisk* use karo</label>
+            <input type="text" id="i-hl" value="ये सिर्फ bat नहीं, *इतिहास है* 😳" oninput="render()"/>
+        </div>
+        <div class="f">
+            <label>Subtitle (optional)</label>
+            <input type="text" id="i-sub" value="" oninput="render()"/>
+        </div>
+        <div class="f">
+            <label>Lines — Enter se alag karo (max 5)</label>
+            <textarea id="i-lines" oninput="render()">2011 World Cup Final… वो iconic moment आज भी याद है
+जब MS Dhoni ने winning six मारकर India ko champion banaya tha.
+Usi match mein istemal bat baad mein ₹72 lakh mein auction hua
+Ye auction London mein hua — saari rakam charity mein donate ki gayi
+Wo moment aaj bhi goosebumps deta hai!</textarea>
+        </div>
+        <div class="f">
+            <label>Footer</label>
+            <input type="text" id="i-footer" value="Follow 👉 @milliontop" oninput="render()"/>
+        </div>
+        <div class="f">
+            <label>Image ya Video upload karo</label>
+            <div class="upload">
+                <input type="file" id="media-inp" accept="image/*,video/*" onchange="loadMedia(this)"/>
+                <div class="ico">📷</div>
+                <p>Click karo — image (→ PNG) ya video (→ MP4) select karo</p>
+            </div>
+            <div id="prev-wrap">
+                <img id="pimg" style="display:none"/>
+                <video id="pvid" style="display:none" muted autoplay loop playsinline></video>
+            </div>
+            <button class="rm-btn" id="rm-btn" onclick="removeMedia()">✕ Remove media</button>
+        </div>
+
+        <div class="dur-wrap" id="dur-wrap">
+            <label style="font-size:10px;color:rgba(255,255,255,.38);letter-spacing:1.2px;text-transform:uppercase">Video duration</label>
+            <div class="dur-row">
+                <button class="dur-btn sel" onclick="selDur(15,this)">15 sec</button>
+                <button class="dur-btn" onclick="selDur(30,this)">30 sec</button>
+                <button class="dur-btn" onclick="selDur(45,this)">45 sec</button>
+                <button class="dur-btn" onclick="selDur(60,this)">60 sec</button>
+            </div>
+            <div class="dur-note" id="dur-note">Video loop hogi — audio include hoga.</div>
+        </div>
     </div>
-    <div class="tcard-lb">Dark Fire</div>
-  </div>
-  <div class="tcard" data-t="3" onclick="selT(3,this)">
-    <div class="tcard-th" style="background:#f0ebe1;flex-direction:column;align-items:flex-start;padding:6px;gap:3px">
-      <div style="font-size:10px;font-weight:900;color:#14100a;line-height:1.1;letter-spacing:-0.5px">BIG<br>BOLD</div>
-      <div style="background:#c83a16;padding:2px 5px;font-size:7px;color:#fff;font-weight:700;border-radius:2px">VIRAL</div>
+
+    <div class="prog-wrap" id="prog-wrap">
+        <div class="prog-bar-bg"><div class="prog-bar" id="prog-bar"></div></div>
+        <div class="prog-label" id="prog-label">Recording... 0s / 15s</div>
     </div>
-    <div class="tcard-lb">Editorial</div>
-  </div>
-  <div class="tcard" data-t="4" onclick="selT(4,this)">
-    <div class="tcard-th" style="background:#03060e;background-image:linear-gradient(rgba(0,210,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,210,255,.06) 1px,transparent 1px);background-size:10px 10px;flex-direction:column;align-items:flex-start;padding:6px">
-      <div style="font-size:10px;font-weight:900;color:#fff;line-height:1.1">NEO<br><span style="color:#00dfff">N</span></div>
-    </div>
-    <div class="tcard-lb">Neon</div>
-  </div>
-  <div class="tcard" data-t="5" onclick="selT(5,this)">
-    <div class="tcard-th" style="background:#fff7ee;flex-direction:column;align-items:flex-start;padding:6px">
-      <div style="font-size:14px;font-weight:900;color:#150800;letter-spacing:-1px;line-height:1">WO<span style="color:#e85004">W</span></div>
-    </div>
-    <div class="tcard-lb">Warm</div>
-  </div>
-  <div class="tcard" data-t="6" onclick="selT(6,this)">
-    <div class="tcard-th" style="background:#010d06;flex-direction:column;align-items:flex-start;padding:6px;gap:2px">
-      <div style="font-size:14px">🏏</div>
-      <div style="font-size:8px;font-weight:900;color:#00d460">Cricket</div>
-    </div>
-    <div class="tcard-lb">Cricket</div>
-  </div>
-</div>
 
-<!-- INPUTS -->
-<div class="ctrl">
-  <div class="row">
-    <div class="f">
-      <label>Handle</label>
-      <input type="text" id="i-handle" value="@milliontop" oninput="render()"/>
-    </div>
-    <div class="f">
-      <label>Badge</label>
-      <input type="text" id="i-badge" value="TRENDING" oninput="render()"/>
-    </div>
-  </div>
-  <div class="f">
-    <label>Headline — colored part ke liye *asterisk* use karo</label>
-    <input type="text" id="i-hl" value="ये सिर्फ bat नहीं, *इतिहास है* 😳" oninput="render()"/>
-  </div>
-  <div class="f">
-    <label>Subtitle (optional — sirf Warm template mein dikhega)</label>
-    <input type="text" id="i-sub" value="" oninput="render()"/>
-  </div>
-  <div class="f">
-    <label>Lines — Enter se alag karo (max 5 lines)</label>
-    <textarea id="i-lines" oninput="render()">2011 World Cup Final… वो iconic moment आज भी याद है
-जब MS Dhoni ने winning six मारकर India को champion बनाया था।
-उसी match में इस्तेमाल bat बाद में ₹72 लाख में auction हुआ
-ये auction London में हुआ — सारी रकम charity में donate की गई
-वो moment आज भी goosebumps देता है!</textarea>
-  </div>
-  <div class="f">
-    <label>Footer</label>
-    <input type="text" id="i-footer" value="Follow 👉 @milliontop" oninput="render()"/>
-  </div>
-  <div class="f">
-    <label>Image या Video</label>
-    <div class="upload" id="upload-z">
-      <input type="file" id="media-inp" accept="image/*,video/*" onchange="loadMedia(this)"/>
-      <div class="ico">📷</div>
-      <p>Click karo — image ya video select karo</p>
-    </div>
-    <div id="prev-wrap">
-      <img id="pimg" style="display:none"/>
-      <video id="pvid" style="display:none" muted autoplay loop playsinline></video>
-    </div>
-    <button class="rm-btn" id="rm-btn" onclick="removeMedia()">✕ Remove media</button>
-  </div>
-</div>
+    <button class="dl" id="dl-btn" onclick="doDownload()">⬇ Download</button>
+    <div class="dl-info" id="dl-info">Image upload = PNG download &nbsp;|&nbsp; Video upload = MP4 download</div>
 
-<button class="dl" id="dl-btn" onclick="doDownload()">⬇ Download (1080 × 1920 PNG)</button>
+    <div id="rr"><div class="post" id="post"></div></div>
 
-<!-- RENDER CANVAS (hidden) -->
-<div id="rr"><div class="post" id="post"></div></div>
-
-<script>
-let curT = 1, mediaSrc = null, mediaType = null;
-
-function selT(n, el) {
-  curT = n;
-  document.querySelectorAll('.tcard').forEach(c => c.classList.remove('on'));
-  el.classList.add('on');
-  render();
-}
-
-function loadMedia(inp) {
-  const f = inp.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = e => {
-    mediaSrc = e.target.result;
-    mediaType = f.type.startsWith('video') ? 'video' : 'image';
-    const pi = document.getElementById('pimg'), pv = document.getElementById('pvid');
-    if (mediaType === 'image') { pi.src = mediaSrc; pi.style.display='block'; pv.style.display='none'; }
-    else { pv.src = mediaSrc; pv.style.display='block'; pi.style.display='none'; }
-    document.getElementById('prev-wrap').style.display = 'block';
-    document.getElementById('rm-btn').style.display = 'block';
-    render();
-  };
-  r.readAsDataURL(f);
-}
-
-function removeMedia() {
-  mediaSrc = null; mediaType = null;
-  document.getElementById('pimg').style.display='none';
-  document.getElementById('pvid').style.display='none';
-  document.getElementById('prev-wrap').style.display='none';
-  document.getElementById('rm-btn').style.display='none';
-  document.getElementById('media-inp').value='';
-  render();
-}
-
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function parseHL(s) {
-  return esc(s).replace(/\*(.*?)\*/g,'<span class="acc">$1</span>');
-}
-
-function render() {
-  const handle = document.getElementById('i-handle').value;
-  const badge  = document.getElementById('i-badge').value;
-  const hl     = document.getElementById('i-hl').value;
-  const sub    = document.getElementById('i-sub').value;
-  const footer = document.getElementById('i-footer').value;
-  const rawLines = document.getElementById('i-lines').value.trim().split('\n').filter(l=>l.trim()).slice(0,5);
-
-  const t = curT;
-  const post = document.getElementById('post');
-  post.className = 'post t' + t;
-
-  const hasMedia = !!mediaSrc;
-
-  // media layer
-  let mhtml = '';
-  if (hasMedia) {
-    const tag = mediaType === 'video'
-      ? `<video src="${mediaSrc}" muted autoplay loop playsinline></video>`
-      : `<img src="${mediaSrc}"/>`;
-    mhtml = `<div class="ml">${tag}<div class="mo"></div></div>`;
-  }
-
-  // brand bar
-  const bbhtml = `<div class="bb"><span class="bh">${esc(handle)}</span><span class="bd">${esc(badge)}</span></div>`;
-
-  // lines
-  const linesHTML = rawLines.map(l => `<div class="li">${esc(l)}</div>`).join('');
-
-  // template bodies
-  let body = '';
-
-  if (t === 1) {
-    body = `
-      <div class="bl">
-        <div class="hl-box"><div class="hl">${parseHL(hl)}</div></div>
-        <div class="lines">${linesHTML}</div>
-        <div class="footer-txt">${esc(footer)}</div>
-      </div>`;
-  } else if (t === 2) {
-    body = `
-      <div class="deco"></div>
-      <div class="bl">
-        <div class="hl-box"><div class="hl">${parseHL(hl)}</div></div>
-        <div class="div-bar"></div>
-        <div class="lines">${linesHTML}</div>
-        <div class="footer-txt">${esc(footer)}</div>
-      </div>`;
-  } else if (t === 3) {
-    body = `
-      <div class="bl">
-        <div class="hl-box"><div class="hl">${parseHL(hl)}</div></div>
-        <div class="tag">${esc(badge)}</div>
-        <div class="lines">${linesHTML}</div>
-        <div class="footer-txt">${esc(footer)}</div>
-      </div>`;
-  } else if (t === 4) {
-    body = `
-      <div class="grid-bg"></div>
-      <div class="bl">
-        <div class="hl-box"><div class="hl">${parseHL(hl)}</div></div>
-        <div class="gline"></div>
-        <div class="lines">${linesHTML}</div>
-        <div class="footer-txt">${esc(footer)}</div>
-      </div>`;
-  } else if (t === 5) {
-    const subHtml = sub ? `<div class="sub">${esc(sub)}</div>` : '';
-    body = `
-      <div class="bl">
-        <div class="hl-box"><div class="hl">${parseHL(hl)}</div>${subHtml}</div>
-        <div class="lines">${linesHTML}</div>
-        <div class="footer-txt">${esc(footer)}</div>
-      </div>`;
-  } else if (t === 6) {
-    body = `
-      <div class="deco"></div>
-      <div class="bl">
-        <div class="hl-box"><div class="cup">🏆</div><div class="hl">${parseHL(hl)}</div></div>
-        <div class="lines">${linesHTML}</div>
-        <div class="footer-txt">${esc(footer)}</div>
-      </div>`;
-  }
-
-  post.innerHTML = mhtml + bbhtml + body;
-}
-
-async function doDownload() {
-  const btn = document.getElementById('dl-btn');
-  btn.textContent = '⏳ Rendering...'; btn.disabled = true;
-
-  // if video: snapshot current frame
-  let videoEl = null, videoParent = null, imgSnap = null;
-  if (mediaType === 'video') {
-    videoEl = document.querySelector('#post .ml video');
-    if (videoEl && videoEl.readyState >= 2) {
-      const c = document.createElement('canvas');
-      c.width = videoEl.videoWidth || 1080;
-      c.height = videoEl.videoHeight || 680;
-      c.getContext('2d').drawImage(videoEl, 0, 0, c.width, c.height);
-      imgSnap = c.toDataURL('image/jpeg', 0.92);
-      const imgEl = document.createElement('img');
-      imgEl.src = imgSnap;
-      imgEl.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
-      videoParent = videoEl.parentNode;
-      videoEl.parentNode.replaceChild(imgEl, videoEl);
-    }
-  }
-
-  await new Promise(r => setTimeout(r, 200));
-
-  try {
-    const canvas = await html2canvas(document.getElementById('post'), {
-      scale: 1, useCORS: true, allowTaint: true,
-      backgroundColor: null, width: 1080, height: 1920, logging: false
-    });
-    const a = document.createElement('a');
-    a.download = 'shorts_post_' + Date.now() + '.png';
-    a.href = canvas.toDataURL('image/png');
-    a.click();
-  } catch(e) { alert('Error: ' + e.message); }
-
-  // restore video
-  if (videoEl && videoParent) render();
-
-  btn.textContent = '⬇ Download (1080 × 1920 PNG)'; btn.disabled = false;
-}
-
-render();
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
